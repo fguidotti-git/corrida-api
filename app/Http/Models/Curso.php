@@ -56,19 +56,9 @@ class Curso extends Model
         ];
         return $ret;
     }
+	public function vendas()
+    {
+      return $this->hasMany(Venda::class);
+    }
 
-	public function updateCurso($data)
-	{
-        $ticket = $this->find($data['id']);
-        $ticket->nome = $data['nome'];
-        $ticket->save();
-        return 1;
-	}
-
-	public function saveCurso($data)
-	{
-		$this->nome = $data['nome'];
-		$this->save();
-		return 1;
-	}
 }

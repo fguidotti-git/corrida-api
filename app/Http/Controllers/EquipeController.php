@@ -155,7 +155,6 @@ class EquipeController extends Controller
         try {
             $equipe = Equipe::find($id);
             if ( !empty($equipe) ) {
-                \Storage::delete($equipe['imagem']);
                 $equipe->delete();
                 $data['result'] = null;
                 $data['error'] = false;

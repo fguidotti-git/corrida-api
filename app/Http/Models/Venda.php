@@ -63,22 +63,14 @@ class Venda extends Model
         return $ret;
     }
 
-	public function updateVenda($data)
-	{
-        $ticket = $this->find($data['id']);
-        $ticket->user_id = $data['user_id'];
-		$ticket->curso_id = $data['curso_id'];
-		$ticket->aluno = $data['aluno'];
-        $ticket->save();
-        return 1;
-	}
 
-	public function saveVenda($data)
-	{
-		$this->user_id = $data['user_id'];
-		$this->curso_id = $data['curso_id'];
-		$this->aluno = $data['aluno'];
-		$this->save();
-		return 1;
-	}
+	public function curso()
+    {
+      return $this->belongsTo(Curso::class);
+    }
+
+	public function user()
+    {
+      return $this->belongsTo(User::class);
+    }
 }

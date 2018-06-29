@@ -57,18 +57,4 @@ class Equipe extends Model
         return $ret;
     }
 
-	public function updateEquipe($data)
-	{
-        $ticket = $this->find($data['id']);
-        $ticket->nome = $data['nome'];
-        $ticket->save();
-        return 1;
-	}
-
-	public function saveEquipe($data)
-	{
-		$this->nome = $data['nome'];
-		$this->save();
-		return 1;
-	}
 }
