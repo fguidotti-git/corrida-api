@@ -21,11 +21,11 @@ class CreateVendasTable extends Migration
             $table->timestamps();
         });
 
-		Schema::table('contents', function($table) {
+		Schema::table('vendas', function($table) {
             $table->foreign('user_id')->references('id')->on('users');
         });
 
-		Schema::table('contents', function($table) {
+		Schema::table('vendas', function($table) {
             $table->foreign('curso_id')->references('id')->on('cursos');
         });
     }

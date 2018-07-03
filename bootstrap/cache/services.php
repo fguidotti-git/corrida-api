@@ -24,13 +24,23 @@
     20 => 'Illuminate\\Validation\\ValidationServiceProvider',
     21 => 'Illuminate\\View\\ViewServiceProvider',
     22 => 'Fideloper\\Proxy\\TrustedProxyServiceProvider',
-    23 => 'Laravel\\Tinker\\TinkerServiceProvider',
-    24 => 'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider',
-    25 => 'Tymon\\JWTAuth\\Providers\\LaravelServiceProvider',
-    26 => 'App\\Providers\\AppServiceProvider',
-    27 => 'App\\Providers\\AuthServiceProvider',
-    28 => 'App\\Providers\\EventServiceProvider',
-    29 => 'App\\Providers\\RouteServiceProvider',
+    23 => '\\InfyOm\\AdminLTETemplates\\AdminLTETemplatesServiceProvider',
+    24 => '\\InfyOm\\Generator\\InfyOmGeneratorServiceProvider',
+    25 => 'Laracasts\\Flash\\FlashServiceProvider',
+    26 => 'Laravel\\Tinker\\TinkerServiceProvider',
+    27 => 'Collective\\Html\\HtmlServiceProvider',
+    28 => 'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider',
+    29 => 'Prettus\\Repository\\Providers\\RepositoryServiceProvider',
+    30 => 'Tymon\\JWTAuth\\Providers\\LaravelServiceProvider',
+    31 => 'Collective\\Html\\HtmlServiceProvider',
+    32 => 'Laracasts\\Flash\\FlashServiceProvider',
+    33 => 'Prettus\\Repository\\Providers\\RepositoryServiceProvider',
+    34 => 'InfyOm\\Generator\\InfyOmGeneratorServiceProvider',
+    35 => 'InfyOm\\AdminLTETemplates\\AdminLTETemplatesServiceProvider',
+    36 => 'App\\Providers\\AppServiceProvider',
+    37 => 'App\\Providers\\AuthServiceProvider',
+    38 => 'App\\Providers\\EventServiceProvider',
+    39 => 'App\\Providers\\RouteServiceProvider',
   ),
   'eager' => 
   array (
@@ -45,11 +55,19 @@
     8 => 'Illuminate\\Session\\SessionServiceProvider',
     9 => 'Illuminate\\View\\ViewServiceProvider',
     10 => 'Fideloper\\Proxy\\TrustedProxyServiceProvider',
-    11 => 'Tymon\\JWTAuth\\Providers\\LaravelServiceProvider',
-    12 => 'App\\Providers\\AppServiceProvider',
-    13 => 'App\\Providers\\AuthServiceProvider',
-    14 => 'App\\Providers\\EventServiceProvider',
-    15 => 'App\\Providers\\RouteServiceProvider',
+    11 => '\\InfyOm\\AdminLTETemplates\\AdminLTETemplatesServiceProvider',
+    12 => '\\InfyOm\\Generator\\InfyOmGeneratorServiceProvider',
+    13 => 'Laracasts\\Flash\\FlashServiceProvider',
+    14 => 'Prettus\\Repository\\Providers\\RepositoryServiceProvider',
+    15 => 'Tymon\\JWTAuth\\Providers\\LaravelServiceProvider',
+    16 => 'Laracasts\\Flash\\FlashServiceProvider',
+    17 => 'Prettus\\Repository\\Providers\\RepositoryServiceProvider',
+    18 => 'InfyOm\\Generator\\InfyOmGeneratorServiceProvider',
+    19 => 'InfyOm\\AdminLTETemplates\\AdminLTETemplatesServiceProvider',
+    20 => 'App\\Providers\\AppServiceProvider',
+    21 => 'App\\Providers\\AuthServiceProvider',
+    22 => 'App\\Providers\\EventServiceProvider',
+    23 => 'App\\Providers\\RouteServiceProvider',
   ),
   'deferred' => 
   array (
@@ -153,6 +171,10 @@
     'validator' => 'Illuminate\\Validation\\ValidationServiceProvider',
     'validation.presence' => 'Illuminate\\Validation\\ValidationServiceProvider',
     'command.tinker' => 'Laravel\\Tinker\\TinkerServiceProvider',
+    'html' => 'Collective\\Html\\HtmlServiceProvider',
+    'form' => 'Collective\\Html\\HtmlServiceProvider',
+    'Collective\\Html\\HtmlBuilder' => 'Collective\\Html\\HtmlServiceProvider',
+    'Collective\\Html\\FormBuilder' => 'Collective\\Html\\HtmlServiceProvider',
     'NunoMaduro\\Collision\\Contracts\\Provider' => 'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider',
   ),
   'when' => 
@@ -194,6 +216,9 @@
     array (
     ),
     'Laravel\\Tinker\\TinkerServiceProvider' => 
+    array (
+    ),
+    'Collective\\Html\\HtmlServiceProvider' => 
     array (
     ),
     'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider' => 

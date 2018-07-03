@@ -1,23 +1,27 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API;
 
 use Illuminate\Http\Request;
 
-class VendaController extends Controller
+class CursoController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
         try {
-            
-            $vendas = Venda::get();
-            
-            $data['result'] = $vendas;
+            if ( isset($request->search) ) {
+                $cursos = Curso::where(
+                    'nome','like','%' . $request->search . '%'
+                )->get();
+            } else {
+                $cursos = Curso::get();
+            }
+            $data['result'] = $cursos;
             $data['error'] = false;
             $data['message'] = null;
             $data['http'] = 200;
@@ -40,19 +44,19 @@ class VendaController extends Controller
     {
         try {
             $input = $request->all();
-            $venda = new Venda();
-            if ( !$venda->validate($input)["error"] ) {
+            $curso = new Curso();
+            if ( !$curso->validate($input)["error"] ) {
 
-                $venda = Venda::create($input);
+                $curso = Curso::create($input);
 
-                $data['result'] = $venda;
+                $data['result'] = $curso;
                 $data['error'] = false;
                 $data['message'] = null;
                 $data['http'] = 200;
             } else {
                 $data['result'] = null;
                 $data['error'] = true;
-                $data['message'] = $venda->validate($request)["message"]->first('aluno');
+                $data['message'] = $curso->validate($request)["message"]->first('nome');
                 $data['http'] = 403;
             }
         } catch( Exception $e ){
@@ -73,16 +77,16 @@ class VendaController extends Controller
     public function show($id)
     {
         try {
-            $venda = Venda::all;
-            if ( !empty($venda) ) {
-                $data['result'] = $venda;
+            $curso = Curso::all;
+            if ( !empty($curso) ) {
+                $data['result'] = $curso;
                 $data['error'] = false;
                 $data['message'] = null;
                 $data['http'] = 200;    
             } else {
                 $data['result'] = null;
                 $data['error'] = true;
-                $data['message'] = 'Venda não encontrada';
+                $data['message'] = 'Curso não encontrado';
                 $data['http'] = 403;
             }
         } catch( Exception $e ){
@@ -105,30 +109,28 @@ class VendaController extends Controller
     {
         try {
             $input = $request->all();
-            $venda = Venda::find($id);
+            $curso = Curso::find($id);
 
-            if ( !empty($venda) ) {
-                if ( !$venda->validate($input)["error"] ) {
+            if ( !empty($curso) ) {
+                if ( !$curso->validate($input)["error"] ) {
                 
-                    $venda->nome = $input['user_id'];
-					$venda->nome = $input['curso_id'];
-					$venda->nome = $input['aluno'];
-                    $venda->save();
+                    $curso->nome = $input['nome'];
+                    $curso->save();
     
-                    $data['result'] = $venda;
+                    $data['result'] = $curso;
                     $data['error'] = false;
                     $data['message'] = null;
                     $data['http'] = 200;
                 } else {
                     $data['result'] = null;
                     $data['error'] = true;
-                    $data['message'] = $venda->validate($request)["message"]->first('nome');
+                    $data['message'] = $curso->validate($request)["message"]->first('nome');
                     $data['http'] = 403;
                 }
             } else {
                 $data['result'] = null;
                 $data['error'] = true;
-                $data['message'] = 'Venda não encontrado';
+                $data['message'] = 'Curso não encontrado';
                 $data['http'] = 403;
             }
         } catch( Exception $e ){
@@ -148,19 +150,18 @@ class VendaController extends Controller
      */
     public function destroy($id)
     {
-        try {
-            $venda = Venda::find($id);
-            if ( !empty($venda) ) {
-
-                $venda->delete();
+         try {
+            $curso = Curso::find($id);
+            if ( !empty($curso) ) {
+                $curso->delete();
                 $data['result'] = null;
                 $data['error'] = false;
-                $data['message'] = 'Venda removida com sucesso';
+                $data['message'] = 'Curso removido com sucesso';
                 $data['http'] = 200;
             } else {
                 $data['result'] = null;
                 $data['error'] = true;
-                $data['message'] = 'Venda não encontrada';
+                $data['message'] = 'Curso não encontrado';
                 $data['http'] = 403;
             }
         } catch( Exception $e ){

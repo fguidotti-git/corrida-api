@@ -2,176 +2,154 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateEquipeRequest;
+use App\Http\Requests\UpdateEquipeRequest;
+use App\Repositories\EquipeRepository;
+use App\Http\Controllers\AppBaseController;
 use Illuminate\Http\Request;
+use Flash;
+use Prettus\Repository\Criteria\RequestCriteria;
+use Response;
 
-class EquipeController extends Controller
+class EquipeController extends AppBaseController
 {
+    /** @var  EquipeRepository */
+    private $equipeRepository;
+
+    public function __construct(EquipeRepository $equipeRepo)
+    {
+        $this->equipeRepository = $equipeRepo;
+    }
+
     /**
-     * Display a listing of the resource.
+     * Display a listing of the Equipe.
      *
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return Response
      */
     public function index(Request $request)
     {
-        try {
-            if ( isset($request->search) ) {
-                $equipes = Equipe::where(
-                    'nome','like','%' . $request->search . '%'
-                )->get();
-            } else {
-                $equipes = Equipe::get();
-            }
-            $data['result'] = $equipes;
-            $data['error'] = false;
-            $data['message'] = null;
-            $data['http'] = 200;
-        } catch( Exception $e ){
-            $data['result'] = null;
-            $data['error'] = true;
-            $data['message'] = $e->getMessage();
-            $data['http'] = 403;
-        }
-        return response()->json($data, $data['http']);
+        $this->equipeRepository->pushCriteria(new RequestCriteria($request));
+        $equipes = $this->equipeRepository->all();
+
+        return view('equipes.index')
+            ->with('equipes', $equipes);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Show the form for creating a new Equipe.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
-    public function store(Request $request)
+    public function create()
     {
-        try {
-            $input = $request->all();
-            $equipe = new Equipe();
-            if ( !$equipe->validate($input)["error"] ) {
-
-                $input['imagem'] = isset($input['imagem']) ? $input['imagem']->store('imagens') : null;
-                $equipe = Equipe::create($input);
-
-                $data['result'] = $equipe;
-                $data['error'] = false;
-                $data['message'] = null;
-                $data['http'] = 200;
-            } else {
-                $data['result'] = null;
-                $data['error'] = true;
-                $data['message'] = $equipe->validate($request)["message"]->first('nome');
-                $data['http'] = 403;
-            }
-        } catch( Exception $e ){
-            $data['result'] = null;
-            $data['error'] = true;
-            $data['message'] = $e->getMessage();
-            $data['http'] = 403;
-        }
-        return response()->json($data, $data['http']);
+        return view('equipes.create');
     }
 
     /**
-     * Display the specified resource.
+     * Store a newly created Equipe in storage.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param CreateEquipeRequest $request
+     *
+     * @return Response
+     */
+    public function store(CreateEquipeRequest $request)
+    {
+        $input = $request->all();
+
+        $equipe = $this->equipeRepository->create($input);
+
+        Flash::success('Equipe saved successfully.');
+
+        return redirect(route('equipes.index'));
+    }
+
+    /**
+     * Display the specified Equipe.
+     *
+     * @param  int $id
+     *
+     * @return Response
      */
     public function show($id)
     {
-        try {
-            $equipe = Equipe::all;
-            if ( !empty($equipe) ) {
-                $data['result'] = $equipe;
-                $data['error'] = false;
-                $data['message'] = null;
-                $data['http'] = 200;    
-            } else {
-                $data['result'] = null;
-                $data['error'] = true;
-                $data['message'] = 'Equipe não encontrada';
-                $data['http'] = 403;
-            }
-        } catch( Exception $e ){
-            $data['result'] = null;
-            $data['error'] = true;
-            $data['message'] = $e->getMessage();
-            $data['http'] = 403;
+        $equipe = $this->equipeRepository->findWithoutFail($id);
+
+        if (empty($equipe)) {
+            Flash::error('Equipe not found');
+
+            return redirect(route('equipes.index'));
         }
-        return response()->json($data, $data['http']);
+
+        return view('equipes.show')->with('equipe', $equipe);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Show the form for editing the specified Equipe.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param  int $id
+     *
+     * @return Response
      */
-    public function update(Request $request, $id)
+    public function edit($id)
     {
-        try {
-            $input = $request->all();
-            $equipe = Equipe::find($id);
+        $equipe = $this->equipeRepository->findWithoutFail($id);
 
-            if ( !empty($equipe) ) {
-                if ( !$equipe->validate($input)["error"] ) {
-                
-                    $equipe->nome = $input['nome'];
-                    $equipe->imagem = isset($input['imagem']) ? $input['imagem']->store('imagens') : $equipe['imagem'];
-                    $equipe->save();
-    
-                    $data['result'] = $equipe;
-                    $data['error'] = false;
-                    $data['message'] = null;
-                    $data['http'] = 200;
-                } else {
-                    $data['result'] = null;
-                    $data['error'] = true;
-                    $data['message'] = $equipe->validate($request)["message"]->first('nome');
-                    $data['http'] = 403;
-                }
-            } else {
-                $data['result'] = null;
-                $data['error'] = true;
-                $data['message'] = 'Equipe não encontrado';
-                $data['http'] = 403;
-            }
-        } catch( Exception $e ){
-            $data['result'] = null;
-            $data['error'] = true;
-            $data['message'] = $e->getMessage();
-            $data['http'] = 403;
+        if (empty($equipe)) {
+            Flash::error('Equipe not found');
+
+            return redirect(route('equipes.index'));
         }
-        return response()->json($data, $data['http']);
+
+        return view('equipes.edit')->with('equipe', $equipe);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Update the specified Equipe in storage.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param  int              $id
+     * @param UpdateEquipeRequest $request
+     *
+     * @return Response
+     */
+    public function update($id, UpdateEquipeRequest $request)
+    {
+        $equipe = $this->equipeRepository->findWithoutFail($id);
+
+        if (empty($equipe)) {
+            Flash::error('Equipe not found');
+
+            return redirect(route('equipes.index'));
+        }
+
+        $equipe = $this->equipeRepository->update($request->all(), $id);
+
+        Flash::success('Equipe updated successfully.');
+
+        return redirect(route('equipes.index'));
+    }
+
+    /**
+     * Remove the specified Equipe from storage.
+     *
+     * @param  int $id
+     *
+     * @return Response
      */
     public function destroy($id)
     {
-        try {
-            $equipe = Equipe::find($id);
-            if ( !empty($equipe) ) {
-                $equipe->delete();
-                $data['result'] = null;
-                $data['error'] = false;
-                $data['message'] = 'Equipe removida com sucesso';
-                $data['http'] = 200;
-            } else {
-                $data['result'] = null;
-                $data['error'] = true;
-                $data['message'] = 'Equipe não encontrada';
-                $data['http'] = 403;
-            }
-        } catch( Exception $e ){
-            $data['result'] = null;
-            $data['error'] = true;
-            $data['message'] = $e->getMessage();
-            $data['http'] = 403;
+        $equipe = $this->equipeRepository->findWithoutFail($id);
+
+        if (empty($equipe)) {
+            Flash::error('Equipe not found');
+
+            return redirect(route('equipes.index'));
         }
-        return response()->json($data, $data['http']);
+
+        $this->equipeRepository->delete($id);
+
+        Flash::success('Equipe deleted successfully.');
+
+        return redirect(route('equipes.index'));
     }
 }

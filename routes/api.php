@@ -23,3 +23,8 @@ Route::post('login', 'AuthController@login');
 Route::apiResource('cursos', 'CursoController');
 Route::apiResource('equipes', 'EquipeController');
 
+
+
+Route::resource('cursos', 'CursoAPIController');
+
+Route::resource('equipes', 'EquipeAPIController');

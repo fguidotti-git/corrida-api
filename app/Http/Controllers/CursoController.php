@@ -2,174 +2,154 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateCursoRequest;
+use App\Http\Requests\UpdateCursoRequest;
+use App\Repositories\CursoRepository;
+use App\Http\Controllers\AppBaseController;
 use Illuminate\Http\Request;
+use Flash;
+use Prettus\Repository\Criteria\RequestCriteria;
+use Response;
 
-class CursoController extends Controller
+class CursoController extends AppBaseController
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    /** @var  CursoRepository */
+    private $cursoRepository;
+
+    public function __construct(CursoRepository $cursoRepo)
     {
-        try {
-            if ( isset($request->search) ) {
-                $cursos = Curso::where(
-                    'nome','like','%' . $request->search . '%'
-                )->get();
-            } else {
-                $cursos = Curso::get();
-            }
-            $data['result'] = $cursos;
-            $data['error'] = false;
-            $data['message'] = null;
-            $data['http'] = 200;
-        } catch( Exception $e ){
-            $data['result'] = null;
-            $data['error'] = true;
-            $data['message'] = $e->getMessage();
-            $data['http'] = 403;
-        }
-        return response()->json($data, $data['http']);
+        $this->cursoRepository = $cursoRepo;
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Display a listing of the Curso.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return Response
      */
-    public function store(Request $request)
+    public function index(Request $request)
     {
-        try {
-            $input = $request->all();
-            $curso = new Curso();
-            if ( !$curso->validate($input)["error"] ) {
+        $this->cursoRepository->pushCriteria(new RequestCriteria($request));
+        $cursos = $this->cursoRepository->all();
 
-                $curso = Curso::create($input);
-
-                $data['result'] = $curso;
-                $data['error'] = false;
-                $data['message'] = null;
-                $data['http'] = 200;
-            } else {
-                $data['result'] = null;
-                $data['error'] = true;
-                $data['message'] = $curso->validate($request)["message"]->first('nome');
-                $data['http'] = 403;
-            }
-        } catch( Exception $e ){
-            $data['result'] = null;
-            $data['error'] = true;
-            $data['message'] = $e->getMessage();
-            $data['http'] = 403;
-        }
-        return response()->json($data, $data['http']);
+        return view('cursos.index')
+            ->with('cursos', $cursos);
     }
 
     /**
-     * Display the specified resource.
+     * Show the form for creating a new Curso.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return Response
+     */
+    public function create()
+    {
+        return view('cursos.create');
+    }
+
+    /**
+     * Store a newly created Curso in storage.
+     *
+     * @param CreateCursoRequest $request
+     *
+     * @return Response
+     */
+    public function store(CreateCursoRequest $request)
+    {
+        $input = $request->all();
+
+        $curso = $this->cursoRepository->create($input);
+
+        Flash::success('Curso saved successfully.');
+
+        return redirect(route('cursos.index'));
+    }
+
+    /**
+     * Display the specified Curso.
+     *
+     * @param  int $id
+     *
+     * @return Response
      */
     public function show($id)
     {
-        try {
-            $curso = Curso::all;
-            if ( !empty($curso) ) {
-                $data['result'] = $curso;
-                $data['error'] = false;
-                $data['message'] = null;
-                $data['http'] = 200;    
-            } else {
-                $data['result'] = null;
-                $data['error'] = true;
-                $data['message'] = 'Curso não encontrado';
-                $data['http'] = 403;
-            }
-        } catch( Exception $e ){
-            $data['result'] = null;
-            $data['error'] = true;
-            $data['message'] = $e->getMessage();
-            $data['http'] = 403;
+        $curso = $this->cursoRepository->findWithoutFail($id);
+
+        if (empty($curso)) {
+            Flash::error('Curso not found');
+
+            return redirect(route('cursos.index'));
         }
-        return response()->json($data, $data['http']);
+
+        return view('cursos.show')->with('curso', $curso);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Show the form for editing the specified Curso.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param  int $id
+     *
+     * @return Response
      */
-    public function update(Request $request, $id)
+    public function edit($id)
     {
-        try {
-            $input = $request->all();
-            $curso = Curso::find($id);
+        $curso = $this->cursoRepository->findWithoutFail($id);
 
-            if ( !empty($curso) ) {
-                if ( !$curso->validate($input)["error"] ) {
-                
-                    $curso->nome = $input['nome'];
-                    $curso->save();
-    
-                    $data['result'] = $curso;
-                    $data['error'] = false;
-                    $data['message'] = null;
-                    $data['http'] = 200;
-                } else {
-                    $data['result'] = null;
-                    $data['error'] = true;
-                    $data['message'] = $curso->validate($request)["message"]->first('nome');
-                    $data['http'] = 403;
-                }
-            } else {
-                $data['result'] = null;
-                $data['error'] = true;
-                $data['message'] = 'Curso não encontrado';
-                $data['http'] = 403;
-            }
-        } catch( Exception $e ){
-            $data['result'] = null;
-            $data['error'] = true;
-            $data['message'] = $e->getMessage();
-            $data['http'] = 403;
+        if (empty($curso)) {
+            Flash::error('Curso not found');
+
+            return redirect(route('cursos.index'));
         }
-        return response()->json($data, $data['http']);
+
+        return view('cursos.edit')->with('curso', $curso);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Update the specified Curso in storage.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param  int              $id
+     * @param UpdateCursoRequest $request
+     *
+     * @return Response
+     */
+    public function update($id, UpdateCursoRequest $request)
+    {
+        $curso = $this->cursoRepository->findWithoutFail($id);
+
+        if (empty($curso)) {
+            Flash::error('Curso not found');
+
+            return redirect(route('cursos.index'));
+        }
+
+        $curso = $this->cursoRepository->update($request->all(), $id);
+
+        Flash::success('Curso updated successfully.');
+
+        return redirect(route('cursos.index'));
+    }
+
+    /**
+     * Remove the specified Curso from storage.
+     *
+     * @param  int $id
+     *
+     * @return Response
      */
     public function destroy($id)
     {
-         try {
-            $curso = Curso::find($id);
-            if ( !empty($curso) ) {
-                $curso->delete();
-                $data['result'] = null;
-                $data['error'] = false;
-                $data['message'] = 'Curso removido com sucesso';
-                $data['http'] = 200;
-            } else {
-                $data['result'] = null;
-                $data['error'] = true;
-                $data['message'] = 'Curso não encontrado';
-                $data['http'] = 403;
-            }
-        } catch( Exception $e ){
-            $data['result'] = null;
-            $data['error'] = true;
-            $data['message'] = $e->getMessage();
-            $data['http'] = 403;
+        $curso = $this->cursoRepository->findWithoutFail($id);
+
+        if (empty($curso)) {
+            Flash::error('Curso not found');
+
+            return redirect(route('cursos.index'));
         }
-        return response()->json($data, $data['http']);
+
+        $this->cursoRepository->delete($id);
+
+        Flash::success('Curso deleted successfully.');
+
+        return redirect(route('cursos.index'));
     }
 }
