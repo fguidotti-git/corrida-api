@@ -1,81 +1,168 @@
 <!DOCTYPE html>
-<html lang="<?php echo e(str_replace('_', '-', app()->getLocale())); ?>">
+<html>
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <title>InfyOm Generator</title>
+    <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
 
-    <!-- CSRF Token -->
-    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
+    <!-- Bootstrap 3.3.7 -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 
-    <title><?php echo e(config('app.name', 'Laravel')); ?></title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-    <!-- Scripts -->
-    <script src="<?php echo e(asset('js/app.js')); ?>" defer></script>
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
 
-    <!-- Fonts -->
-    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css?family=Raleway:300,400,600" rel="stylesheet" type="text/css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/2.4.3/css/AdminLTE.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/2.4.3/css/skins/_all-skins.min.css">
 
-    <!-- Styles -->
-    <link href="<?php echo e(asset('css/app.css')); ?>" rel="stylesheet">
+    <!-- iCheck -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/iCheck/1.0.2/skins/square/_all.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/css/select2.min.css">
+
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+
+    <?php echo $__env->yieldContent('css'); ?>
 </head>
-<body>
-    <div id="app">
-        <nav class="navbar navbar-expand-md navbar-light navbar-laravel">
-            <div class="container">
-                <a class="navbar-brand" href="<?php echo e(url('/')); ?>">
-                    <?php echo e(config('app.name', 'Laravel')); ?>
 
+<body class="skin-blue sidebar-mini">
+<?php if(!Auth::guest()): ?>
+    <div class="wrapper">
+        <!-- Main Header -->
+        <header class="main-header">
+
+            <!-- Logo -->
+            <a href="#" class="logo">
+                <b>InfyOm</b>
+            </a>
+
+            <!-- Header Navbar -->
+            <nav class="navbar navbar-static-top" role="navigation">
+                <!-- Sidebar toggle button-->
+                <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+                    <span class="sr-only">Toggle navigation</span>
                 </a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="<?php echo e(__('Toggle navigation')); ?>">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+                <!-- Navbar Right Menu -->
+                <div class="navbar-custom-menu">
+                    <ul class="nav navbar-nav">
+                        <!-- User Account Menu -->
+                        <li class="dropdown user user-menu">
+                            <!-- Menu Toggle Button -->
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <!-- The user image in the navbar-->
+                                <img src="http://infyom.com/images/logo/blue_logo_150x150.jpg"
+                                     class="user-image" alt="User Image"/>
+                                <!-- hidden-xs hides the username on small devices so only the image appears. -->
+                                <span class="hidden-xs"><?php echo Auth::user()->name; ?></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <!-- The user image in the menu -->
+                                <li class="user-header">
+                                    <img src="http://infyom.com/images/logo/blue_logo_150x150.jpg"
+                                         class="img-circle" alt="User Image"/>
+                                    <p>
+                                        <?php echo Auth::user()->name; ?>
 
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <!-- Left Side Of Navbar -->
-                    <ul class="navbar-nav mr-auto">
+                                        <small>Member since <?php echo Auth::user()->created_at->format('M. Y'); ?></small>
+                                    </p>
+                                </li>
+                                <!-- Menu Footer-->
+                                <li class="user-footer">
+                                    <div class="pull-left">
+                                        <a href="#" class="btn btn-default btn-flat">Profile</a>
+                                    </div>
+                                    <div class="pull-right">
+                                        <a href="<?php echo url('/logout'); ?>" class="btn btn-default btn-flat"
+                                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                            Sign out
+                                        </a>
+                                        <form id="logout-form" action="<?php echo e(url('/logout')); ?>" method="POST" style="display: none;">
+                                            <?php echo e(csrf_field()); ?>
 
-                    </ul>
-
-                    <!-- Right Side Of Navbar -->
-                    <ul class="navbar-nav ml-auto">
-                        <!-- Authentication Links -->
-                        <?php if(auth()->guard()->guest()): ?>
-                            <li class="nav-item">
-                                <a class="nav-link" href="<?php echo e(route('login')); ?>"><?php echo e(__('Login')); ?></a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="<?php echo e(route('register')); ?>"><?php echo e(__('Register')); ?></a>
-                            </li>
-                        <?php else: ?>
-                            <li class="nav-item dropdown">
-                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                    <?php echo e(Auth::user()->name); ?> <span class="caret"></span>
-                                </a>
-
-                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="<?php echo e(route('logout')); ?>"
-                                       onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
-                                        <?php echo e(__('Logout')); ?>
-
-                                    </a>
-
-                                    <form id="logout-form" action="<?php echo e(route('logout')); ?>" method="POST" style="display: none;">
-                                        <?php echo csrf_field(); ?>
-                                    </form>
-                                </div>
-                            </li>
-                        <?php endif; ?>
+                                        </form>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
                     </ul>
                 </div>
-            </div>
-        </nav>
+            </nav>
+        </header>
 
-        <main class="py-4">
+        <!-- Left side column. contains the logo and sidebar -->
+        <?php echo $__env->make('layouts.sidebar', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+        <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
             <?php echo $__env->yieldContent('content'); ?>
-        </main>
+        </div>
+
+        <!-- Main Footer -->
+        <footer class="main-footer" style="max-height: 100px;text-align: center">
+            <strong>Copyright © 2016 <a href="#">Company</a>.</strong> All rights reserved.
+        </footer>
+
     </div>
+<?php else: ?>
+    <nav class="navbar navbar-default navbar-static-top">
+        <div class="container">
+            <div class="navbar-header">
+
+                <!-- Collapsed Hamburger -->
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                        data-target="#app-navbar-collapse">
+                    <span class="sr-only">Toggle Navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+
+                <!-- Branding Image -->
+                <a class="navbar-brand" href="<?php echo url('/'); ?>">
+                    InfyOm Generator
+                </a>
+            </div>
+
+            <div class="collapse navbar-collapse" id="app-navbar-collapse">
+                <!-- Left Side Of Navbar -->
+                <ul class="nav navbar-nav">
+                    <li><a href="<?php echo url('/home'); ?>">Home</a></li>
+                </ul>
+
+                <!-- Right Side Of Navbar -->
+                <ul class="nav navbar-nav navbar-right">
+                    <!-- Authentication Links -->
+                    <li><a href="<?php echo url('/login'); ?>">Login</a></li>
+                    <li><a href="<?php echo url('/register'); ?>">Register</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div id="page-content-wrapper">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <?php echo $__env->yieldContent('content'); ?>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
+
+    <!-- jQuery 3.1.1 -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <!-- AdminLTE App -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/2.4.3/js/adminlte.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/iCheck/1.0.2/icheck.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/js/select2.min.js"></script>
+
+    <?php echo $__env->yieldContent('scripts'); ?>
 </body>
 </html>
